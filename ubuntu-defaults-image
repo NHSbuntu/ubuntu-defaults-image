@@ -88,16 +88,16 @@ add_ppas () {
 add_pclouds () {
     for pcloud in $PCLOUDS; do
 
-        # fetch GPG key
-        curl -L https://packagecloud.io/${PCLOUD%/*}/${PCLOUD##*/}/gpgkey | apt-key --keyring config/archives/ubuntu-defaults.key add
+        # fetch GPG key from packagecloud
+				wget https://packagecloud.io/$pcloud/gpgkey -O ${pcloud##*/}.gpgkey && apt-key --keyring config/archives/ubuntu-defaults.key add ${pcloud##*/}.gpgkey
 
-        # add ppa apt source
-				local PCLOUD_APT="deb https://packagecloud.io/${PCLOUD%/*}/${PCLOUD##*/}/ubuntu $SUITE main"
+        # add packagecloud apt source
+				local PCLOUD_APT="deb https://packagecloud.io/$pcloud/ubuntu $SUITE main"
         echo "$PCLOUD_APT" >> config/archives/ubuntu-defaults.list
     done
 }
 
-eval set -- "$(getopt -o '' -l help,locale:,keep-apt,keep-apt-components:,package:,arch:,flavor:,release:,components:,mirror:,security-mirror:,ppa: -- "$@")" || { help; exit 1; }
+eval set -- "$(getopt -o '' -l help,locale:,keep-apt,keep-apt-components:,package:,arch:,flavor:,release:,components:,mirror:,security-mirror:,ppa:,pcloud: -- "$@")" || { help; exit 1; }
 while :; do
     case $1 in
 	--help)
@@ -145,10 +145,10 @@ while :; do
 	    shift 2
 	    ;;
 	--pcloud)
-	    if ! expr match "$2" '^[.[:alnum:]-]\+/[[:alnum:]-]\+$' >/dev/null; then
-		echo "Invalid packagecloud specification, must be username/reponame" >&2
+			if ! expr match "$2" '^[.[:alnum:]-]\+/[[:alnum:]-]\+$' >/dev/null; then
+		echo "Invalid packagecloud specification, must be name/repo" >&2
 		exit 1
-	    fi
+			fi
 	    PCLOUDS="$PCLOUDS $2"
 	    shift 2
 	    ;;
@@ -236,6 +236,10 @@ if [ "$COMPONENTS" ]; then
 	config/bootstrap
 fi
 
+# Include HTTPS for apt in bootstrap
+sed -i "s/^\\(LB_BOOTSTRAP_INCLUDE=\\).*/\\1\"gnupg libcurl3-gnutls apt-transport-https ca-certificates\"/" \
+config/bootstrap
+
 sed -i "s/^\\(LB_SYSLINUX_THEME=\\).*/\\1\"ubuntu-$SUITE\"/" config/binary
 
 if [ "${PACKAGE%.deb}" = "$PACKAGE" ]; then
@@ -248,6 +252,10 @@ fi
 
 if [ -n "$PPAS" ]; then
     add_ppas
+fi
+
+if [ -n "$PCLOUDS" ]; then
+    add_pclouds
 fi
 
 PACKAGENAME=${PACKAGE%%_*}
