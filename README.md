@@ -1,2 +1,10 @@
-# ubuntu-defaults-image
-Build an image based on an Ubuntu flavor plus a defaults package.
+# About
+
+Build an Ubuntu(/flavor) from a defaults package on packagecloud.io
+
+# Usage
+```
+export LB_ISO_TITLE="NHSbuntu"
+export LB_ISO_VOLUME="NHSbuntu xenial $(date +%Y%m%d-%H:%M)"
+sudo -E ./ubuntu-defaults-image --package nhsbuntu-default-settings --keep-apt --release xenial --flavor ubuntu-gnome --pcloud nhsbuntu/nhsbuntu-default-settings
+```

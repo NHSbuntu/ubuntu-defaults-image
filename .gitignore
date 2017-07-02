@@ -1,0 +1,10 @@
+# Ignore live-build artifacts
+auto
+.build
+binary
+binary.*
+cache
+chroot
+chroot.*
+config
+livecd.*
