@@ -29,7 +29,7 @@ COMPONENTS=
 MIRROR=
 SECURITY_MIRROR=
 PPAS=
-PCLOUDS=
+REPOS=
 FLAVOR=ubuntu
 SUITE=$(lsb_release -sc)
 KEEP_APT_OPT=
@@ -56,7 +56,7 @@ Options:
   --security-mirror       : Ubuntu security mirror to be used during build
                             [default: http://security.ubuntu.com/ubuntu/]
   --ppa USER/PPANAME      : Enable additional PPA [default: none]
-  --pcloud USER/NAME      : Enable packagecloud repo [default: none]
+  --repo USER/NAME        : Enable packagecloud repo [default: none]
   --keep-apt              : Do not remove apt indexes from live system
   --keep-apt-components COMPONENTS :
                             Do not remove apt indexes for selected components from live
@@ -86,21 +86,21 @@ add_ppas () {
     done
 }
 
-# add $PCLOUDS
-add_pclouds () {
-    for pcloud in $PCLOUDS; do
+# add $REPOS
+add_repos () {
+    for repo in $REPOS; do
 
         # fetch GPG key from packagecloud
-				wget https://packagecloud.io/$pcloud/gpgkey -O ${pcloud##*/}.gpgkey && apt-key --keyring config/archives/ubuntu-defaults.key add ${pcloud##*/}.gpgkey
-				rm ${pcloud##*/}.gpgkey
+				wget https://packagecloud.io/$repo/gpgkey -O ${repo##*/}.gpgkey && apt-key --keyring config/archives/ubuntu-defaults.key add ${repo##*/}.gpgkey
+				rm ${repo##*/}.gpgkey
 
         # add packagecloud apt source
-				local PCLOUD_APT="deb https://packagecloud.io/$pcloud/ubuntu $SUITE main"
-        echo "$PCLOUD_APT" >> config/archives/ubuntu-defaults.list
+				local REPO_APT="deb https://packagecloud.io/$repo/ubuntu $SUITE main"
+        echo "$REPO_APT" >> config/archives/ubuntu-defaults.list
     done
 }
 
-eval set -- "$(getopt -o '' -l help,locale:,keep-apt,keep-apt-components:,package:,arch:,flavor:,release:,components:,mirror:,security-mirror:,ppa:,pcloud: -- "$@")" || { help; exit 1; }
+eval set -- "$(getopt -o '' -l help,locale:,keep-apt,keep-apt-components:,package:,arch:,flavor:,release:,components:,mirror:,security-mirror:,ppa:,repo: -- "$@")" || { help; exit 1; }
 while :; do
     case $1 in
 	--help)
@@ -147,12 +147,12 @@ while :; do
 	    PPAS="$PPAS $2"
 	    shift 2
 	    ;;
-	--pcloud)
+	--repo)
 			if ! expr match "$2" '^[.[:alnum:]-]\+/[[:alnum:]-]\+$' >/dev/null; then
 		echo "Invalid packagecloud specification, must be name/repo" >&2
 		exit 1
 			fi
-	    PCLOUDS="$PCLOUDS $2"
+	    REPOS="$REPOS $2"
 	    shift 2
 	    ;;
         --keep-apt)
@@ -257,8 +257,8 @@ if [ -n "$PPAS" ]; then
     add_ppas
 fi
 
-if [ -n "$PCLOUDS" ]; then
-    add_pclouds
+if [ -n "$REPOS" ]; then
+    add_repos
 fi
 
 PACKAGENAME=${PACKAGE%%_*}
