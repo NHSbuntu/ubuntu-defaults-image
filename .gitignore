@@ -8,3 +8,5 @@ chroot
 chroot.*
 config
 livecd.*
+amd64
+i386
