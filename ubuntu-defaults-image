@@ -35,9 +35,9 @@ SUITE=$(lsb_release -sc)
 KEEP_APT_OPT=
 DELETE_APT_LISTS="rm -vf /var/lib/apt/lists/*_*"
 
-if which dpkg-architecture >/dev/null 2>&1; then
-	ARCH="$(dpkg-architecture -qDEB_HOST_ARCH)"
-fi
+# if which dpkg-architecture >/dev/null 2>&1; then
+# 	ARCH="$(dpkg-architecture -qDEB_HOST_ARCH)"
+# fi
 
 help () {
     cat >&2 <<EOF
