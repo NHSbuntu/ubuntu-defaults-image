@@ -1,0 +1,7 @@
+sudo: required
+language: generic
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get -y install syslinux-themes-ubuntu gfxboot-theme-ubuntu memtest86+ syslinux
+  - sudo apt-get -y install genisoimage
