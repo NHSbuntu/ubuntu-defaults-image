@@ -4,5 +4,6 @@ language: generic
 services:
   - docker
 
-after-success:
-  - docker build -f Dockerfile
+before_install:
+  - docker build -t ubuntu-defaults-image-rd .
+  - docker run --privileged ubuntu-defaults-image-rd /bin/sh -c "cd /ubuntu-defaults-image-rd; ./build-amd64.sh"
