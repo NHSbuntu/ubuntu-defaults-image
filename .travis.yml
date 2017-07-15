@@ -9,4 +9,4 @@ before_install:
   - docker run apt-get update && apt-get upgrade --yes
   - docker run apt-get install git --yes
   - docker run git clone https://github.com/robdyke/ubuntu-defaults-image-rd.git
-  - docker run cd ubuntu-defaults-image-rd && ./bunild.sh amd64
+  - docker run cd ubuntu-defaults-image-rd && ./build.sh amd64
