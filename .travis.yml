@@ -6,7 +6,7 @@ services:
 
 before_install:
   - docker pull ubuntu:16.04
-  - docker run ubuntu:16.04 /bin/sh -c "apt-get update && apt-get upgrade --yes"
-  - docker run ubuntu:16.04 /bin/sh -c "apt-get install git --yes"
+  - docker run ubuntu:16.04 /bin/sh -c "apt-get update; apt-get upgrade -y; apt-get install -y git"
+  # - docker run ubuntu:16.04 /bin/sh -c "apt-get install git --yes"
   - docker run ubuntu:16.04 /bin/sh -c "git clone https://github.com/robdyke/ubuntu-defaults-image-rd.git ."
   - docker run ubuntu:16.04 /bin/sh -c "./build.sh amd64"
