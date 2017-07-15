@@ -6,6 +6,8 @@ export LB_ISO_TITLE="NHSbuntu"
 export LB_ISO_VOLUME="NHSbuntu xenial $(date +%Y%m%d)"
 export BUILD_ISO_FILENAME="NHSbuntu-$1-$(date +%Y%m%d)"
 
+apt-get install -y chroot curl git live-build cdebootstrap ubuntu-defaults-builder syslinux-utils genisoimage memtest86+ syslinux syslinux-themes-ubuntu-xenial gfxboot-theme-ubuntu livecd-rootfs
+
 mkdir $WORKDIR
 cd $WORKDIR
 ../ubuntu-defaults-image --ppa nhsbuntu/ppa --package nhsbuntu-default-settings --arch $1 --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings
