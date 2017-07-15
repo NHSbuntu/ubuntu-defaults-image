@@ -4,6 +4,5 @@ language: generic
 services:
   - docker
 
-before_install:
-  - docker pull ubuntu:16.04
-  - docker run ubuntu:16.04
+after-success:
+  - docker build -f Dockerfile
