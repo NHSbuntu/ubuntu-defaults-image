@@ -1,7 +1,10 @@
 sudo: required
 language: generic
 
+services:
+  - docker
+
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get -y install syslinux-themes-ubuntu gfxboot-theme-ubuntu memtest86+ syslinux
-  - sudo apt-get -y install genisoimage
+  - docker pull ubuntu/xenial
+  - docker run apt-get update && apt-get upgrade --yes
+  - docker run apt-get install git --yes
