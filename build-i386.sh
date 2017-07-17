@@ -4,7 +4,7 @@
 WORKDIR=i386
 export LB_ISO_TITLE="NHSbuntu"
 export LB_ISO_VOLUME="NHSbuntu xenial $(date +%Y%m%d)"
-export BUILD_ISO_FILENAME="NHSbuntu-$1-$(date +%Y%m%d)"
+export BUILD_ISO_FILENAME="NHSbuntu-i386-$(date +%Y%m%d)"
 
 apt-get install -y curl git live-build cdebootstrap ubuntu-defaults-builder syslinux-utils genisoimage memtest86+ syslinux syslinux-themes-ubuntu-xenial gfxboot-theme-ubuntu livecd-rootfs
 
