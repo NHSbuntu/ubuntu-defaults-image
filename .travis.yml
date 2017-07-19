@@ -8,5 +8,5 @@ script:
   - docker pull nhsbuntu/ubuntu-defaults-image:latest
   # - docker run --rm -it -v `pwd`:`pwd` -w `pwd` --name ubuntu-defaults-image --privileged ubuntu-defaults-image /bin/sh -c "./build-amd64.sh"
   # - docker run -it --name ubuntu-defaults-image --privileged ubuntu-defaults-image-rd /bin/sh -c "git clone https://github.com/robdyke/ubuntu-defaults-image-rd.git; cd ubuntu-defaults-image-rd; ./build-amd64.sh"
-  - docker run --env BUILDARCH=amd64 --rm -it -v `pwd`:`pwd` -w `pwd` --name ubuntu-defaults-image --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
-  - docker run --env BUILDARCH=i386 --rm -it -v `pwd`:`pwd` -w `pwd` --name ubuntu-defaults-image --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
+  - docker run --env BUILDARCH=amd64 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildamd64 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
+  - docker run --env BUILDARCH=i386 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildi386 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
