@@ -5,6 +5,8 @@
 # Usage
 # $ BUILDARCH=amd64 ./build.sh
 
+BUILDTIDY=false
+
 export BUILD_ISO_ARCH=$BUILDARCH
 export BUILD_ISO_WORKDIR=$BUILDARCH
 export BUILD_ISO_FILE="NHSbuntu-$BUILD_ISO_ARCH-$(date +%Y%m%d)"
@@ -28,7 +30,10 @@ echo "INFO: Patched lb_binary_disk"
 
 # Do the build
 echo "INFO: Running build"
-mkdir $BUILD_ISO_WORKDIR
+
+if [ ! -d "$BUILD_ISO_WORKDIR" ]; then
+  mkdir $BUILD_ISO_WORKDIR
+fi
 cd $BUILD_ISO_WORKDIR
 
 # Choose your command!
@@ -51,9 +56,14 @@ if [ -e binary.hybrid.iso -a -e livecd.ubuntu-gnome.iso ]
     exit 1
 fi
 
-echo "INFO: Tidying up"
-cd ../
-rm -rf $BUILD_ISO_WORKDIR
+if [ "$BUILDTIDY" = "true" ]
+  then
+    echo "INFO: Tidying up"
+    cd ../
+    rm -rf $BUILD_ISO_WORKDIR
+  else
+    cd ../
+fi
 
 echo "INFO: Finished"
 exit 0
