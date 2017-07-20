@@ -5,7 +5,7 @@
 # Usage
 # $ BUILDARCH=amd64 ./build.sh
 
-BUILDTIDY=false
+BUILDTIDY=true
 
 export BUILD_ISO_ARCH=$BUILDARCH
 export BUILD_ISO_WORKDIR=$BUILDARCH
