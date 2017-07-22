@@ -1,0 +1,23 @@
+sudo: required
+language: generic
+services:
+- docker
+before_install:
+- openssl aes-256-cbc -K $encrypted_d422b1704e6e_key -iv $encrypted_d422b1704e6e_iv
+  -in travisci_rsa.enc -out travisci_rsa -d
+script:
+- docker pull nhsbuntu/ubuntu-defaults-image:latest
+- docker run --env BUILDARCH=amd64 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildamd64 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
+#- docker run --env BUILDARCH=amd64 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildamd64 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "touch NHSbuntu-amd64.iso"
+- docker run --env BUILDARCH=i386 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildi386 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
+#- docker run --env BUILDARCH=i386 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildi386 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "touch NHSbuntu-i386.iso"
+env:
+  global:
+  - secure: oKNZopM7iBrrhgEZGmdqFVH9iGEOi6HV/PO4IftYgCVrUayKBWQFjwhVfeyMpncOPls2MBC/f9ms5zBYL1tP2nCNQ8UZ/0D9295hWNVEO5FxdoLRlh1yaVr106lB8XwGc/mYACIGffXLPipsdDgIr8J6M+BKiiI9LYKkoiNmg6LsakIU9R6WBtJOi+kZwDCOJ4Hviy+dOdkJC9eiWLxhhMsJO2asEX06iRVDST0crN29FyY8eQBQo8n8TOCPP8xYTmSl9ss8grOkFzbbJDcoDF/B/7gHiykLQZbTqfGIKniNZt+ymWSCL4OXZ9hS2UtbBektvzITlTEtBdTMM9rwOEYVifeY2wS9c9NZbs1EdRy7mH0XfjiF3cZ3mpKY4t6GnvDHROMmjWwFQ6Qdp8FeboSxLJxQxcYXJQw2saQgu3a6lhc0FTTl9r7w3eexmdxt3pRya3yHRyRKgQwb5fO+IoVpmgm8nXgv2TL/ZXcdP6n0fEm5VuAV6b7cBidID5HVPuSKYm5REmwuJ4AgtrQbdTsBeVH078HHvoWndxgG5Xoef6lEtZu1FfNrH/uvFYoIVjy+BDoYGxcwlZAm7kheBuP8sxM5oEzxvqt/YJFVj77/s8StV5ho20Cg0l1gDp9d5e134R/2ipzQfh/Jd+7CrZwYTt0TQ7TP8myvTZ3Aa1k=
+  - secure: IlYKwU6c5p/u1SiaHevRl6ovh+CBDhq/wC5dBwOZFYKL036qNKY2lRvvKMoHrtM4hNOZlb8AgJ+2/77aNzfCLGURHe8QCZwr/ZCqlAEPtFYFODU8rAGojpa0CqF9/yKXAoIldLS5QOvj9wqOw+jxYOW1s/D8yr28orBneUJUorkOosL13awPr+xO+CxnO/+9wxdjjqQE2s4VXevDgICSp7nBzMB3TtabY3mXWEPVDPLIW6dFaE9w6CPKREeexcWZN54P7tySdp6e/mAi/nyKO9KXk21VYhbEnAuSrNhNV9KhP3j+D94gQ8ClFBOn1F54zxUMr65q73JKkR8URaXQPD0HSNW0njDHpJUexlvPbQ7D6o5niehZwwFAY0OtJKPg5z55xv3uQzT9Jk0Dc6HZ59HcX9dwVV2voOyioTtJfvgon+KplQsObsX0tX9aSPxecTSQdEV20fy+NLH4hbPgI5cgJjuhf4o09dKOI+XDgtCrQk6kiWfuBJzi7ZL6ufqjKhm1cOHX8QDDeURMO2GQDnGedcKurM7m2FQV5M5em2D3uaPgfkDkgCdCGx89AAFTMxyLsveJHkDs6Qifu7oY9iRVDf7rZ6khEWDqsu+7OaOI18k/1feqonx4lYZNh8qz2BHySX6oe2FRJi3WbbViR4xNDHgiyVDz5dhqZTZhFhA=
+after_success:
+  - eval "$(ssh-agent -s)" #start the ssh agent
+  - chmod 600 travisci_rsa # this key should have push access
+  - ssh-add travisci_rsa
+  - scp -o stricthostkeychecking=no NHSbuntu-amd64* $deployuser@$deployhost:/120GB/ISO/amd64
+  - scp -o stricthostkeychecking=no NHSbuntu-i386* $deployuser@$deployhost:/120GB/ISO/i386

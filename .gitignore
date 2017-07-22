@@ -11,3 +11,4 @@ livecd.*
 amd64
 i386
 *.iso
+*.log
