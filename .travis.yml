@@ -19,5 +19,5 @@ after_success:
   - eval "$(ssh-agent -s)" #start the ssh agent
   - chmod 600 travisci_rsa # this key should have push access
   - ssh-add travisci_rsa
-  - scp NHSBuntu-amd64* $deployuser@$deployhost:/120GB/ISO/amd64
-  - scp NHSBuntu-i386* $deployuser@$deployhost:/120GB/ISO/i386
+  - scp -o stricthostkeychecking=no NHSBuntu-amd64* $deployuser@$deployhost:/120GB/ISO/amd64
+  - scp -o stricthostkeychecking=no NHSBuntu-i386* $deployuser@$deployhost:/120GB/ISO/i386
