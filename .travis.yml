@@ -7,10 +7,10 @@ before_install:
   -in travisci_rsa.enc -out travisci_rsa -d
 script:
 - docker pull nhsbuntu/ubuntu-defaults-image:latest
-- docker run --env BUILDARCH=amd64 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildamd64
-  --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
-- docker run --env BUILDARCH=i386 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildi386
-  --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
+#- docker run --env BUILDARCH=amd64 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildamd64 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
+- docker run --env BUILDARCH=amd64 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildamd64 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "touch NHSBuntu-amd64.iso"
+#- docker run --env BUILDARCH=i386 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildi386 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "./build.sh"
+- docker run --env BUILDARCH=i386 --rm -it -v `pwd`:`pwd` -w `pwd` --name buildi386 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash -c "touch NHSBuntu-i386.iso"
 env:
   global:
   - secure: oKNZopM7iBrrhgEZGmdqFVH9iGEOi6HV/PO4IftYgCVrUayKBWQFjwhVfeyMpncOPls2MBC/f9ms5zBYL1tP2nCNQ8UZ/0D9295hWNVEO5FxdoLRlh1yaVr106lB8XwGc/mYACIGffXLPipsdDgIr8J6M+BKiiI9LYKkoiNmg6LsakIU9R6WBtJOi+kZwDCOJ4Hviy+dOdkJC9eiWLxhhMsJO2asEX06iRVDST0crN29FyY8eQBQo8n8TOCPP8xYTmSl9ss8grOkFzbbJDcoDF/B/7gHiykLQZbTqfGIKniNZt+ymWSCL4OXZ9hS2UtbBektvzITlTEtBdTMM9rwOEYVifeY2wS9c9NZbs1EdRy7mH0XfjiF3cZ3mpKY4t6GnvDHROMmjWwFQ6Qdp8FeboSxLJxQxcYXJQw2saQgu3a6lhc0FTTl9r7w3eexmdxt3pRya3yHRyRKgQwb5fO+IoVpmgm8nXgv2TL/ZXcdP6n0fEm5VuAV6b7cBidID5HVPuSKYm5REmwuJ4AgtrQbdTsBeVH078HHvoWndxgG5Xoef6lEtZu1FfNrH/uvFYoIVjy+BDoYGxcwlZAm7kheBuP8sxM5oEzxvqt/YJFVj77/s8StV5ho20Cg0l1gDp9d5e134R/2ipzQfh/Jd+7CrZwYTt0TQ7TP8myvTZ3Aa1k=
