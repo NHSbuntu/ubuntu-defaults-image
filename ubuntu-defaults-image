@@ -24,7 +24,6 @@ set -e
 
 LOCALE=
 PACKAGE=
-XPACKAGES=
 ARCH=
 COMPONENTS=
 MIRROR=
@@ -101,14 +100,7 @@ add_repos () {
     done
 }
 
-# add extra packages
-add_xpackages () {
-      for xpackage in $XPACKAGES; do
-      echo "$xpackage" >> config/package-lists/ubuntu-defaults.list.chroot_install
-    done
-}
-
-eval set -- "$(getopt -o '' -l help,locale:,keep-apt,keep-apt-components:,package:,arch:,flavor:,release:,components:,mirror:,security-mirror:,ppa:,repo:,xpackage: -- "$@")" || { help; exit 1; }
+eval set -- "$(getopt -o '' -l help,locale:,keep-apt,keep-apt-components:,package:,arch:,flavor:,release:,components:,mirror:,security-mirror:,ppa:,repo: -- "$@")" || { help; exit 1; }
 while :; do
     case $1 in
 	--help)
@@ -121,11 +113,6 @@ while :; do
 	    ;;
 	--package)
 	    PACKAGE="$2"
-      # PACKAGE="$PACKAGE $2"
-	    shift 2
-	    ;;
-  --xpackage)
-      XPACKAGES="$XPACKAGES $2"
 	    shift 2
 	    ;;
 	--arch)
@@ -272,10 +259,6 @@ fi
 
 if [ -n "$REPOS" ]; then
     add_repos
-fi
-
-if [ -n "$XPACKAGES" ]; then
-    add_xpackages
 fi
 
 PACKAGENAME=${PACKAGE%%_*}
