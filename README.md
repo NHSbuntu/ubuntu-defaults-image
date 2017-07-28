@@ -1,6 +1,6 @@
 # NHSbuntu - ubuntu-defaults-image
 
-Builds an ISO of an Ubuntu (/flavor) from a defaults package. This version has added support for repos hosted on packagecloud.io and multiple extra packages.
+Builds ISO of an Ubuntu (/flavor) from a defaults package. This version has added support for repos hosted on packagecloud.io and multiple extra packages.
 
 Based on [ubuntu-defaults-builder](https://launchpad.net/ubuntu/xenial/+package/ubuntu-defaults-builder) by Martin Pitt.
 
