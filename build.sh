@@ -1,8 +1,8 @@
 #! /bin/sh
-# Wrapper for NHSbuntu customised ubuntu-defaults-image
-# Expects ENV VAR for arch
+# Wrapper for NHSbuntu using customised ubuntu-defaults-image
 
 # Usage
+# Expects ENV VAR for arch
 # $ BUILDARCH=amd64 ./build.sh
 
 BUILDTIDY=true
@@ -38,10 +38,10 @@ cd $BUILD_ISO_WORKDIR
 
 # Choose your command!
 # Uncomment this line to run 'quietly' and log to ../$BUILD_ISO_ARCH.log
-#../ubuntu-defaults-image --ppa nhsbuntu/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings > ../$BUILD_ISO_ARCH.log 2>&1
+#../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --xpackage libreoffice-style-breeze --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings > ../$BUILD_ISO_ARCH.log 2>&1
 
 # Uncomment this line to run 'noisily'
-../ubuntu-defaults-image --ppa nhsbuntu/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings
+../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --xpackage libreoffice-style-breeze --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings
 
 echo "INFO: Completed build"
 
