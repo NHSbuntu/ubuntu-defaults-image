@@ -2,37 +2,46 @@
 # Wrapper for NHSbuntu using customised ubuntu-defaults-image
 
 # Usage:
-# Requires ENV VAR for arch
-# $ BUILDARCH=amd64 ./build.sh
+# Requires ENV VAR for arch & flavor (Gnome / Cinnamon / Mate)
+# $ BUILDARCH=amd64 BUILDFLAVOUR=gnome ./build.sh
 
 # Optional ENV VAR for logging
-# $ BUILD_LOGGING=quiet ./build.sh
+# $ BUILD_LOGGING=quiet BUILDARCH=amd64 BUILDFLAVOUR=gnome ./build.sh
 
+# Set variables for script
 BUILD_TIDY=false
 
+# Set variables for live-build
 export BUILD_ISO_ARCH=$BUILDARCH
 export BUILD_ISO_WORKDIR=$BUILDARCH
-export BUILD_ISO_FILE="NHSbuntu-$BUILD_ISO_ARCH-$(date +%Y%m%d)"
+export BUILD_ISO_FLAVOUR=$BUILDFLAVOUR
+export BUILD_ISO_FILE="NHSbuntu-$BUILD_ISO_FLAVOUR-$BUILD_ISO_ARCH-$(date +%Y%m%d)"
 export LB_ISO_TITLE=NHSbuntu
-export LB_ISO_VOLUME="NHSbuntu Xenial $(date +%Y%m%d)"
+export LB_ISO_VOLUME="NHSbuntu $(date +%Y%m%d)"
 
-if [ "$BUILD_LOG" = "quiet" ]
+# Set logging output
+if [ "$BUILDLOG" = "quiet" ]
   then
     export BUILD_LOGGING="quiet"
+    export BUILD_LOGSTATE="../$BUILD_ISO_ARCH.log"
     export BUILD_LOGOPTS=" > ../$BUILD_ISO_ARCH.log 2>&1"
   else
     export BUILD_LOGGING="normal"
+    export BUILD_LOGSTATE="console"
+    export BUILD_LOGOPTS=
 fi
 
-echo "INFO: Build architecture is ${BUILD_ISO_ARCH}"
+# INFO: to console
 echo "INFO: Build workdir is ${BUILD_ISO_WORKDIR}"
+echo "INFO: Build logging set to ${BUILD_LOGGING}"
+echo "INFO: Build log output to ${BUILD_LOGSTATE}"
+echo "INFO: Build architecture is ${BUILD_ISO_ARCH}"
+echo "INFO: Build flavor is ${BUILD_ISO_FLAVOUR}"
 echo "INFO: Build ISO filename is ${BUILD_ISO_FILE}"
-echo "INFO: Build log level set to ${BUILD_LOGGING}"
-echo "INFO: Build log opts are \"${BUILD_LOGOPTS}\""
 echo "INFO: live-build ISO title is ${LB_ISO_TITLE}"
 echo "INFO: live-build ISO volume is ${LB_ISO_VOLUME}"
 
-
+# Dependencies
 echo "INFO: Installing dependencies"
 apt-get install -qq -y curl git live-build cdebootstrap ubuntu-defaults-builder syslinux-utils genisoimage memtest86+ syslinux syslinux-themes-ubuntu-xenial gfxboot-theme-ubuntu livecd-rootfs
 
@@ -42,49 +51,79 @@ cp /usr/lib/live/build/lb_binary_disk /usr/lib/live/build/lb_binary_disk.orig
 sed -i 's/TITLE="Ubuntu"/TITLE="${LB_ISO_TITLE}"/' /usr/lib/live/build/lb_binary_disk
 echo "INFO: Patched lb_binary_disk"
 
-# Do the build
-echo "INFO: Running build"
+# Setup build
+echo "INFO: Create workdir for build"
 
+# Make workdir for arch
 if [ ! -d "$BUILD_ISO_WORKDIR" ]; then
   mkdir $BUILD_ISO_WORKDIR
 fi
 cd $BUILD_ISO_WORKDIR
 
-# Choose your command!
-# Uncomment this line to run 'quietly' and log to ../$BUILD_ISO_ARCH.log
-#../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --xpackage libreoffice-style-breeze --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings > ../$BUILD_ISO_ARCH.log 2>&1
+# Run build
+echo "INFO: Run build"
 
-# Uncomment this line to run 'noisily'
-#../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa ubuntu-x-swat/updates --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-mate --repo nhsbuntu/nhsbuntu-default-settings
+# For build - ubuntu-gnome
+if [ "$BUILD_ISO_FLAVOUR" = "gnome" ]; then
+  echo "INFO: Building NHSbuntu - gnome"
+  echo "INFO: ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings $BUILD_LOGOPTS"
+  ../ubuntu-defaults-image --ppa nhsbuntu/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}
+fi
 
-# BUILD_LOGOPTS from BUILD_LOGGING
-echo "INFO: Build commands follow"
+# For build - ubuntu-gnome dev
+if [ "$BUILD_ISO_FLAVOUR" = "gnome-dev" ]; then
+  echo "INFO: Building NHSbuntu - Gnome - Development"
+  echo "INFO: ../ubuntu-defaults-image --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings-test ${BUILD_LOGOPTS}"
+  ../ubuntu-defaults-image --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings-test ${BUILD_LOGOPTS}
+fi
 
-# For ubuntu-gnome
-echo "INFO: NHSbuntu - gnome"
-echo "INFO: ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings $BUILD_LOGOPTS"
-#../ubuntu-defaults-image --ppa nhsbuntu/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}
+# For build - ubuntu-gnome & cinnamon dev
+if [ "$BUILD_ISO_FLAVOUR" = "cinnamon-dev" ]; then
+  echo "INFO: Building NHSbuntu - Cinnamon - Development"
+  echo "INFO: ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --xpackage libreoffice-style-breeze --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}"
+  ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --xpackage libreoffice-style-breeze --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}
+fi
 
-# For ubuntu-gnome
-echo "INFO: NHSbuntu - cinnamon"
-echo "INFO: ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --xpackage libreoffice-style-breeze --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings $BUILD_LOGOPTS"
-#../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --xpackage libreoffice-style-breeze --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}
-
-# For ubuntu-mate
-echo "INFO: NHSbuntu - mate"
-echo "INFO: ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa ubuntu-x-swat/updates --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-mate --repo nhsbuntu/nhsbuntu-default-settings $BUILD_LOGOPTS"
-#../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa ubuntu-x-swat/updates --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-mate --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}
+# For build - ubuntu-mate dev
+if [ "$BUILD_ISO_FLAVOUR" = "mate-dev" ]; then
+  echo "INFO: Building NHSbuntu - Mate - Development"
+  echo "INFO: ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa ubuntu-x-swat/updates --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-mate --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}"
+  ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa ubuntu-x-swat/updates --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-mate --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}
+fi
 
 echo "INFO: Completed build"
 
-if [ -e binary.hybrid.iso -a -e livecd.ubuntu-gnome.iso ]
+# Check for ISOs
+BUILD_OUTISO_BINARY=$(ls -1|grep binary|grep iso)
+BUILD_OUTISO_LIVECD=$(ls -1|grep livecd|grep iso)
+
+if [ -f "$BUILD_OUTISO_BINARY" ]
   then
-    echo "INFO: ISO files created"
-    echo "INFO: Moving ISO files"
-    mv binary.hybrid.iso ../$BUILD_ISO_FILE-binary.iso
-    mv livecd.ubuntu-gnome.iso ../$BUILD_ISO_FILE-livecd.iso
+    echo "INFO: Found $BUILD_OUTISO_BINARY"
+    echo "INFO: Moving binary ISO file"
+    mv $BUILD_OUTISO_BINARY ../$BUILD_ISO_FILE-binary.iso
+    BUILD_OUTISO_STATE=true
   else
-    echo "INFO: No ISO files created"
+    echo "INFO: binary ISO file not found"
+    BUILD_OUTISO_STATE=false
+fi
+
+if [ -f "$BUILD_OUTISO_LIVECD" ]
+  then
+    echo "INFO: Found $BUILD_OUTISO_LIVECD"
+    echo "INFO: Moving livecd ISO file"
+    mv $BUILD_OUTISO_LIVECD ../$BUILD_ISO_FILE-livecd.iso
+    BUILD_OUTISO_STATE=true
+  else
+    echo "INFO: livecd ISO file not found"
+    BUILD_OUTISO_STATE=false
+fi
+
+if [ "${BUILD_OUTISO_STATE}" = true ]
+  then
+    echo "INFO: Built ISOs Successfully"
+  else
+    echo "INFO: Failed to build ISOs"
     exit 1
 fi
 
