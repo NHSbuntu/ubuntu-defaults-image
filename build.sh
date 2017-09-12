@@ -2,14 +2,20 @@
 # Wrapper for NHSbuntu using customised ubuntu-defaults-image
 
 # Usage:
+# Run with sudo -E
+
 # Requires ENV VAR for arch & flavor (Gnome / Cinnamon / Mate)
-# $ BUILDARCH=amd64 BUILDFLAVOUR=gnome ./build.sh
+# $ BUILDARCH=amd64 BUILDFLAVOUR=gnome sudo -E ./build.sh
 
 # Optional ENV VAR for logging
-# $ BUILD_LOGGING=quiet BUILDARCH=amd64 BUILDFLAVOUR=gnome ./build.sh
+# $ BUILDLOG=quiet BUILDARCH=amd64 BUILDFLAVOUR=gnome sudo -E ./build.sh
 
 # Set variables for script
 BUILD_TIDY=false
+
+if [ -z "$BUILDFLAVOUR" ]; then
+  BUILDFLAVOUR=gnome
+fi
 
 # Set variables for live-build
 export BUILD_ISO_ARCH=$BUILDARCH
@@ -41,15 +47,22 @@ echo "INFO: Build ISO filename is ${BUILD_ISO_FILE}"
 echo "INFO: live-build ISO title is ${LB_ISO_TITLE}"
 echo "INFO: live-build ISO volume is ${LB_ISO_VOLUME}"
 
-# Dependencies
-echo "INFO: Installing dependencies"
+# Install dependencies
+# These dependencies are installed in our Docker image
+echo "INFO: Checking / installing dependencies"
 apt-get install -qq -y curl git live-build cdebootstrap ubuntu-defaults-builder syslinux-utils genisoimage memtest86+ syslinux syslinux-themes-ubuntu-xenial gfxboot-theme-ubuntu livecd-rootfs
 
 # Patch lb_binary_disk to support $LB_ISO_VOLUME
-echo "INFO: Patching lb_binary_disk"
-cp /usr/lib/live/build/lb_binary_disk /usr/lib/live/build/lb_binary_disk.orig
-sed -i 's/TITLE="Ubuntu"/TITLE="${LB_ISO_TITLE}"/' /usr/lib/live/build/lb_binary_disk
-echo "INFO: Patched lb_binary_disk"
+echo "INFO: Checking lb_binary_disk"
+grep LB_ISO_TITLE /usr/lib/live/build/lb_binary_disk > /dev/null
+if [ $? -eq 0 ]; then
+    echo "INFO: Checked lb_binary_disk"
+else
+  echo "INFO: Patching lb_binary_disk"
+  cp /usr/lib/live/build/lb_binary_disk /usr/lib/live/build/lb_binary_disk.orig
+  sed -i 's/TITLE="Ubuntu"/TITLE="${LB_ISO_TITLE}"/' /usr/lib/live/build/lb_binary_disk
+fi
+echo "INFO: Verified lb_binary_disk"
 
 # Setup build
 echo "INFO: Create workdir for build"
@@ -61,37 +74,45 @@ fi
 cd $BUILD_ISO_WORKDIR
 
 # Run build
-echo "INFO: Run build"
+echo "INFO: Build started"
 
 # For build - ubuntu-gnome
 if [ "$BUILD_ISO_FLAVOUR" = "gnome" ]; then
   echo "INFO: Building NHSbuntu - gnome"
-  echo "INFO: ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings $BUILD_LOGOPTS"
-  ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}
+  # Start build with options
+  BUILD_ISO_CMD="../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}"
+  echo "EXEC: $BUILD_ISO_CMD"
+  $BUILD_ISO_CMD
 fi
 
 # For build - ubuntu-gnome dev
 if [ "$BUILD_ISO_FLAVOUR" = "gnome-dev" ]; then
   echo "INFO: Building NHSbuntu - Gnome - Development"
-  echo "INFO: ../ubuntu-defaults-image --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings-test ${BUILD_LOGOPTS}"
-  ../ubuntu-defaults-image --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings-test ${BUILD_LOGOPTS}
+  # Start build with options
+  BUILD_ISO_CMD="../ubuntu-defaults-image --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings-dev ${BUILD_LOGOPTS}"
+  echo "EXEC: $BUILD_ISO_CMD"
+  $BUILD_ISO_CMD
 fi
 
 # For build - ubuntu-gnome & cinnamon dev
 if [ "$BUILD_ISO_FLAVOUR" = "cinnamon-dev" ]; then
   echo "INFO: Building NHSbuntu - Cinnamon - Development"
-  echo "INFO: ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --xpackage libreoffice-style-breeze --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}"
-  ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --xpackage libreoffice-style-breeze --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}
+  # Start build with options
+  BUILD_ISO_CMD="../ubuntu-defaults-image --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings-dev ${BUILD_LOGOPTS}"
+  echo "EXEC: $BUILD_ISO_CMD"
+  $BUILD_ISO_CMD
 fi
 
 # For build - ubuntu-mate dev
 if [ "$BUILD_ISO_FLAVOUR" = "mate-dev" ]; then
   echo "INFO: Building NHSbuntu - Mate - Development"
-  echo "INFO: ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa ubuntu-x-swat/updates --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-mate --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}"
-  ../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa ubuntu-x-swat/updates --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-mate --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}
+  # Start build with options
+  BUILD_ISO_CMD="../ubuntu-defaults-image --ppa ubuntu-x-swat/updates --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-mate --repo nhsbuntu/nhsbuntu-default-settings-dev ${BUILD_LOGOPTS}"
+  echo "EXEC: $BUILD_ISO_CMD"
+  $BUILD_ISO_CMD
 fi
 
-echo "INFO: Completed build"
+echo "INFO: Build ended"
 
 # Check for ISOs
 BUILD_OUTISO_BINARY=$(ls -1|grep binary|grep iso)
@@ -102,6 +123,10 @@ if [ -f "$BUILD_OUTISO_BINARY" ]
     echo "INFO: Found $BUILD_OUTISO_BINARY"
     echo "INFO: Moving binary ISO file"
     mv $BUILD_OUTISO_BINARY ../$BUILD_ISO_FILE-binary.iso
+    echo "INFO: Generating checksums"
+    md5sum $BUILD_ISO_FILE-binary.iso > $BUILD_ISO_FILE-binary.iso.checksum
+    sha1sum $BUILD_ISO_FILE-binary.iso >> $BUILD_ISO_FILE-binary.iso.checksum
+    sha256sum $BUILD_ISO_FILE-binary.iso >> $BUILD_ISO_FILE-binary.iso.checksum
     BUILD_OUTISO_STATE=true
   else
     echo "INFO: binary ISO file not found"
@@ -113,6 +138,11 @@ if [ -f "$BUILD_OUTISO_LIVECD" ]
     echo "INFO: Found $BUILD_OUTISO_LIVECD"
     echo "INFO: Moving livecd ISO file"
     mv $BUILD_OUTISO_LIVECD ../$BUILD_ISO_FILE-livecd.iso
+    cd ../
+    echo "INFO: Generating checksums"
+    md5sum $BUILD_ISO_FILE-livecd.iso > $BUILD_ISO_FILE-livecd.iso.checksum
+    sha1sum $BUILD_ISO_FILE-livecd.iso >> $BUILD_ISO_FILE-livecd.iso.checksum
+    sha256sum $BUILD_ISO_FILE-livecd.iso >> $BUILD_ISO_FILE-livecd.iso.checksum
     BUILD_OUTISO_STATE=true
   else
     echo "INFO: livecd ISO file not found"
