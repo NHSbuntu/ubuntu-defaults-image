@@ -123,6 +123,7 @@ if [ -f "$BUILD_OUTISO_BINARY" ]
     echo "INFO: Found $BUILD_OUTISO_BINARY"
     echo "INFO: Moving binary ISO file"
     mv $BUILD_OUTISO_BINARY ../$BUILD_ISO_FILE-binary.iso
+    cd ../
     echo "INFO: Generating checksums"
     md5sum $BUILD_ISO_FILE-binary.iso > $BUILD_ISO_FILE-binary.iso.checksum
     sha1sum $BUILD_ISO_FILE-binary.iso >> $BUILD_ISO_FILE-binary.iso.checksum
