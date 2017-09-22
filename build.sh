@@ -56,7 +56,7 @@ apt-get install -qq -y curl git live-build cdebootstrap ubuntu-defaults-builder 
 echo "INFO: Checking lb_binary_disk"
 grep LB_ISO_TITLE /usr/lib/live/build/lb_binary_disk > /dev/null
 if [ $? -eq 0 ]; then
-    echo "INFO: Checked lb_binary_disk"
+  echo "INFO: Checked lb_binary_disk"
 else
   echo "INFO: Patching lb_binary_disk"
   cp /usr/lib/live/build/lb_binary_disk /usr/lib/live/build/lb_binary_disk.orig
@@ -131,12 +131,12 @@ if [ -f "$BUILD_OUTISO_BINARY" ]
   then
     echo "INFO: Found $BUILD_OUTISO_BINARY"
     echo "INFO: Moving binary ISO file"
-    mv $BUILD_OUTISO_BINARY ../$BUILD_ISO_FILE-binary.iso
-    cd ../
+    mv $BUILD_OUTISO_BINARY $BUILD_ISO_FILE-binary.iso
     echo "INFO: Generating checksums"
     md5sum $BUILD_ISO_FILE-binary.iso > $BUILD_ISO_FILE-binary.iso.checksum
     sha1sum $BUILD_ISO_FILE-binary.iso >> $BUILD_ISO_FILE-binary.iso.checksum
     sha256sum $BUILD_ISO_FILE-binary.iso >> $BUILD_ISO_FILE-binary.iso.checksum
+    mv $BUILD_ISO_FILE-binary.iso $BUILD_ISO_FILE-binary.iso.checksum ../
     BUILD_OUTISO_STATE=true
   else
     echo "INFO: binary ISO file not found"
@@ -147,12 +147,12 @@ if [ -f "$BUILD_OUTISO_LIVECD" ]
   then
     echo "INFO: Found $BUILD_OUTISO_LIVECD"
     echo "INFO: Moving livecd ISO file"
-    mv $BUILD_OUTISO_LIVECD ../$BUILD_ISO_FILE-livecd.iso
-    cd ../
+    mv $BUILD_OUTISO_LIVECD $BUILD_ISO_FILE-livecd.iso
     echo "INFO: Generating checksums"
     md5sum $BUILD_ISO_FILE-livecd.iso > $BUILD_ISO_FILE-livecd.iso.checksum
     sha1sum $BUILD_ISO_FILE-livecd.iso >> $BUILD_ISO_FILE-livecd.iso.checksum
     sha256sum $BUILD_ISO_FILE-livecd.iso >> $BUILD_ISO_FILE-livecd.iso.checksum
+    mv $BUILD_ISO_FILE-livecd.iso $BUILD_ISO_FILE-livecd.iso.checksum ../
     BUILD_OUTISO_STATE=true
   else
     echo "INFO: livecd ISO file not found"
