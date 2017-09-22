@@ -12,3 +12,4 @@ amd64
 i386
 *.iso
 *.log
+*.checksum
