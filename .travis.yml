@@ -26,8 +26,8 @@ after_success:
 - eval "$(ssh-agent -s)"
 - chmod 600 build_rsa
 - ssh-add build_rsa
-- scp -o stricthostkeychecking=no NHSbuntu-*-amd64*-binary* $BUILDUSER@$BUILDHOST:$BUILDPATH/amd64
-- scp -o stricthostkeychecking=no NHSbuntu-*-i386*-binary* $BUILDUSER@$BUILDHOST:$BUILDPATH/i386
+- scp -o stricthostkeychecking=no NHSbuntu-*-amd64*-binary* $BUILDUSER@$BUILDHOST:/mnt/ISO/amd64
+- scp -o stricthostkeychecking=no NHSbuntu-*-i386*-binary* $BUILDUSER@$BUILDHOST:/mnt/ISO/i386
 notifications:
   slack:
     secure: r1DhvwOVcxN7JmfBkSF389VhGGUa7UDnG/M+LcxasINe2VV2ymemaxEoVbeDF4unXtwc5xImuYQUxtLs0Q+SmIMAUl0dggv/5quw5gw9hiURdmyC6JPtgDZDPAZ4GUiRFstWhqpRW1n07hHDaSkQOmFJxpTP/mtm80BamXsKYGrW6z/PekcbmDzhfWZk1zAnJTsrNuYFA+Ii9Cv6kUbwEYKlF2axArpcQ7kvOcGY/a6YB36JVxmMmNf6zlTipUka5BUyH5HAUr4eGOwiZ3Flba55/SxDPzFcWO7reLreypjeM471qFpTVOnXmaKH7G3lFunPGu/LIX2hSIUjnrM1E51cNBPeI6cfExoOsH9p0lvDtu191kHnRjWDKyTEJLmmfR5Ibe4UcsYIMxUfE1jNrks1qLxvwKHVBVeFP76RohyzJfg+x/cMQMay76l2TR2+NihaBxoZH+Wjx+2OPvhdVZzyPPWhY/iiSxORlkP7Ad4XMj4FLgbY3fLjvKmaOC+AO8h5i/ZFSoXJ4vCOSFbLFpjAR8dOp8tYAofMDjriT4zXN90Z/+oPRmA8djkEcMXmdMZAHd6hbAd+KK2MwzOHaBAqpmHZKs0gx2tUtJwAc6XKL3RhBq9GIel0IwGnRf4v9xQ3bcMZLUMeAVq/r7f9bQMXyTXI7jVmMLCw5xWEs/g=
