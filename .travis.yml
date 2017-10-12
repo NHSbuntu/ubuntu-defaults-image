@@ -7,13 +7,13 @@ jobs:
   - stage: amd64
     script:
     - docker pull nhsbuntu/ubuntu-defaults-image:latest
-    - docker run --env BUILDARCH=amd64 --env BUILDFLAVOUR=gnome --env BUILDLOG=quiet --rm -it -v `pwd`:`pwd`
+    - docker run --env BUILDARCH=amd64 --env BUILDFLAVOUR=gnome --rm -it -v `pwd`:`pwd`
       -w `pwd` --name buildamd64 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash
       -c "./build.sh"
   - stage: i386
     script:
     - docker pull nhsbuntu/ubuntu-defaults-image:latest
-    - docker run --env BUILDARCH=i386 --env BUILDFLAVOUR=gnome --env BUILDLOG=quiet --rm -it -v `pwd`:`pwd`
+    - docker run --env BUILDARCH=i386 --env BUILDFLAVOUR=gnome --rm -it -v `pwd`:`pwd`
       -w `pwd` --name buildi386 --privileged nhsbuntu/ubuntu-defaults-image /bin/bash
       -c "./build.sh"
 env:
