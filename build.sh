@@ -29,8 +29,9 @@ export LB_ISO_VOLUME="NHSbuntu $(date +%Y%m%d)"
 if [ "$BUILDLOG" = "quiet" ]
   then
     export BUILD_LOGGING="quiet"
-    export BUILD_LOGSTATE="../$BUILD_ISO_ARCH.log"
-    export BUILD_LOGOPTS=" > ../$BUILD_ISO_ARCH.log 2>&1"
+    export BUILD_LOGSTATE="../$BUILD_ISO_FILE.log"
+    export BUILD_LOGOPTS=">> ../$BUILD_ISO_FILE.log 2>&1"
+    rm -f ../$BUILD_ISO_FILE
   else
     export BUILD_LOGGING="normal"
     export BUILD_LOGSTATE="console"
@@ -82,7 +83,7 @@ if [ "$BUILD_ISO_FLAVOUR" = "gnome" ]; then
   # Start build with options
   BUILD_ISO_CMD="../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome ${BUILD_LOGOPTS}"
   echo "EXEC: $BUILD_ISO_CMD"
-  $BUILD_ISO_CMD
+  eval $BUILD_ISO_CMD
 fi
 
 # For build - ubuntu-gnome-nightly
@@ -91,7 +92,7 @@ if [ "$BUILD_ISO_FLAVOUR" = "gnome-nightly" ]; then
   # Start build with options
   BUILD_ISO_CMD="../ubuntu-defaults-image --ppa nhsbuntu/ppa --ppa libreoffice/ppa --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings ${BUILD_LOGOPTS}"
   echo "EXEC: $BUILD_ISO_CMD"
-  $BUILD_ISO_CMD
+  eval $BUILD_ISO_CMD
 fi
 
 # For build - ubuntu-gnome dev
@@ -100,7 +101,7 @@ if [ "$BUILD_ISO_FLAVOUR" = "gnome-dev" ]; then
   # Start build with options
   BUILD_ISO_CMD="../ubuntu-defaults-image --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings-dev ${BUILD_LOGOPTS}"
   echo "EXEC: $BUILD_ISO_CMD"
-  $BUILD_ISO_CMD
+  eval $BUILD_ISO_CMD
 fi
 
 # For build - ubuntu-gnome & cinnamon dev
@@ -109,7 +110,7 @@ if [ "$BUILD_ISO_FLAVOUR" = "cinnamon-dev" ]; then
   # Start build with options
   BUILD_ISO_CMD="../ubuntu-defaults-image --ppa embrosyn/cinnamon --package nhsbuntu-default-settings --xpackage cinnamon --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-gnome --repo nhsbuntu/nhsbuntu-default-settings-dev ${BUILD_LOGOPTS}"
   echo "EXEC: $BUILD_ISO_CMD"
-  $BUILD_ISO_CMD
+  eval $BUILD_ISO_CMD
 fi
 
 # For build - ubuntu-mate dev
@@ -118,7 +119,7 @@ if [ "$BUILD_ISO_FLAVOUR" = "mate-dev" ]; then
   # Start build with options
   BUILD_ISO_CMD="../ubuntu-defaults-image --ppa ubuntu-x-swat/updates --package nhsbuntu-default-settings --arch $BUILD_ISO_ARCH --release xenial --flavor ubuntu-mate --repo nhsbuntu/nhsbuntu-default-settings-dev ${BUILD_LOGOPTS}"
   echo "EXEC: $BUILD_ISO_CMD"
-  $BUILD_ISO_CMD
+  eval $BUILD_ISO_CMD
 fi
 
 echo "INFO: Build ended"
